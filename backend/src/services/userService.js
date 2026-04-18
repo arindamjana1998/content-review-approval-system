@@ -2,8 +2,9 @@ const userRepository = require("../repositories/userRepository");
 const AppError = require("../utils/appError");
 
 class UserService {
-  async getAllUsers() {
-    return await userRepository.findAll();
+  async getAllUsers(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    return await userRepository.findAll(skip, limit);
   }
 
   async getUserById(id) {

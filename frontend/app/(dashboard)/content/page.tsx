@@ -10,11 +10,18 @@ import ContentModal from "@/components/content/ContentModal";
 import DetailsModal from "@/components/content/DetailsModal";
 import WorkflowModal from "@/components/content/WorkflowModal";
 import ConfirmationModal from "@/components/shared/ConfirmationModal";
+import Pagination from "@/components/shared/Pagination";
 import { toast } from "react-toastify";
 
 const ContentPageContent = () => {
   const [contents, setContents] = useState<Content[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 0,
+  });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -24,17 +31,18 @@ const ContentPageContent = () => {
     "approve",
   );
   const searchParams = useSearchParams();
-  const statusFilter = searchParams.get("status");
+  const statusFilter = searchParams.get("status") || "ALL";
 
-  const filteredContents = contents.filter((c) => {
-    if (!statusFilter || statusFilter === "ALL") return true;
-    return c.status === statusFilter;
-  });
-
-  const fetchContents = async () => {
+  const fetchContents = async (page = 1) => {
+    setLoading(true);
     try {
-      const data = await contentService.getContents();
+      const { data, pagination: pagData } = await contentService.getContents(
+        page,
+        10,
+        statusFilter,
+      );
       setContents(data);
+      setPagination(pagData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -43,8 +51,8 @@ const ContentPageContent = () => {
   };
 
   useEffect(() => {
-    fetchContents();
-  }, []);
+    fetchContents(1);
+  }, [statusFilter]);
 
   const handleAction = async (content: Content, action: string) => {
     if (action === "edit") {
@@ -107,9 +115,17 @@ const ContentPageContent = () => {
       />
 
       <ContentTable
-        contents={filteredContents}
+        contents={contents}
         onAction={handleAction}
         onViewDetails={handleViewDetails}
+      />
+
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={pagination.pages}
+        onPageChange={fetchContents}
+        totalItems={pagination.total}
+        itemsPerPage={pagination.limit}
       />
 
       <ContentModal

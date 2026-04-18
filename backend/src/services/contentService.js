@@ -2,8 +2,9 @@ const contentRepository = require("../repositories/contentRepository");
 const AppError = require("../utils/appError");
 
 class ContentService {
-  async getAllContents() {
-    return await contentRepository.findAll();
+  async getAllContents(page = 1, limit = 10, query = {}) {
+    const skip = (page - 1) * limit;
+    return await contentRepository.findAll(query, skip, limit);
   }
 
   async getContentById(id) {

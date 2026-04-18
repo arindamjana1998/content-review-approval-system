@@ -2,8 +2,22 @@ const contentService = require("../services/contentService");
 
 const getContents = async (req, res, next) => {
   try {
-    const contents = await contentService.getAllContents();
-    res.json(contents);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const status = req.query.status;
+    const query = status && status !== "ALL" ? { status } : {};
+    
+    const { contents, total } = await contentService.getAllContents(page, limit, query);
+
+    res.json({
+      data: contents,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     next(error);
   }

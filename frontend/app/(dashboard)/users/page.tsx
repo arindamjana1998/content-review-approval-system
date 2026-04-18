@@ -7,19 +7,28 @@ import UserTable from "@/components/users/UserTable";
 import UserHeader from "@/components/users/UserHeader";
 import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import UserModal from "@/components/users/UserModal";
+import Pagination from "@/components/shared/Pagination";
 import { toast } from "react-toastify";
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 0,
+  });
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = 1) => {
+    setLoading(true);
     try {
-      const data = await userService.getUsers();
+      const { data, pagination: pagData } = await userService.getUsers(page, 10);
       setUsers(data);
+      setPagination(pagData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -28,7 +37,7 @@ const UsersPage = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(1);
   }, []);
 
   const handleDeleteUser = (id: string) => {
@@ -56,6 +65,14 @@ const UsersPage = () => {
       <UserHeader onCreateUser={() => setIsCreateModalOpen(true)} />
 
       <UserTable users={users} onDelete={handleDeleteUser} />
+
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={pagination.pages}
+        onPageChange={fetchUsers}
+        totalItems={pagination.total}
+        itemsPerPage={pagination.limit}
+      />
 
       <UserModal
         isOpen={isCreateModalOpen}

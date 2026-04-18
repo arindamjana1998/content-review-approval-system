@@ -1,9 +1,18 @@
+import {
+  Content,
+  DashboardSummary,
+  PaginatedResponse,
+  User as UserType,
+} from "../types";
 import API from "./api";
-import { Content, DashboardSummary } from "../types";
 
 export const contentService = {
-  getContents: async () => {
-    const { data } = await API.get<Content[]>("/content");
+  getContents: async (page = 1, limit = 10, status?: string) => {
+    let url = `/content?page=${page}&limit=${limit}`;
+    if (status && status !== "ALL") {
+      url += `&status=${status}`;
+    }
+    const { data } = await API.get<PaginatedResponse<Content>>(url);
     return data;
   },
   getContentById: async (id: string) => {
@@ -52,8 +61,10 @@ export const contentService = {
 };
 
 export const userService = {
-  getUsers: async () => {
-    const { data } = await API.get("/users");
+  getUsers: async (page = 1, limit = 10) => {
+    const { data } = await API.get<PaginatedResponse<UserType>>(
+      `/users?page=${page}&limit=${limit}`,
+    );
     return data;
   },
   createUser: async (payload: {

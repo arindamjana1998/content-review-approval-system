@@ -1,8 +1,12 @@
 const User = require("../models/User");
 
 class UserRepository {
-  async findAll() {
-    return await User.find().select("-password");
+  async findAll(skip = 0, limit = 10) {
+    const [users, total] = await Promise.all([
+      User.find().select("-password").skip(skip).limit(limit),
+      User.countDocuments(),
+    ]);
+    return { users, total };
   }
 
   async findById(id) {
