@@ -162,12 +162,12 @@ The project follows a modern **MERN-like stack** architecture:
 
 - **Default Credentials**: The system includes a set of mock users for testing. All users use the same default password: `Qwe@1234`.
 
-| Username    | Role     | Purpose                               |
-| :---------- | :------- | :------------------------------------ |
-| `admin`     | Admin    | Full system management and analytics. |
-| `creator1`  | Creator  | Content drafting and submission.      |
-| `reviewer1` | Reviewer | Level 1 content review.               |
-| `reviewer2` | Reviewer | Level 2 content review.               |
+| Username    | Role     | Password | Purpose                               |
+| :---------- | :------- | :------- | ------------------------------------- |
+| `admin`     | Admin    | Qwe@1234 | Full system management and analytics. |
+| `creator1`  | Creator  | Qwe@1234 | Content drafting and submission.      |
+| `reviewer1` | Reviewer | Qwe@1234 | Level 1 content review.               |
+| `reviewer2` | Reviewer | Qwe@1234 | Level 2 content review.               |
 
 - **Seeding**: The backend automatically runs a seeding process on startup if the database is empty. To manually trigger or view the logic, see `backend/src/seeds/seed.js`.
 - **Audit Logs**: Every status change is captured in the `approvalHistory` array within the content document, visible in the UI timeline.
