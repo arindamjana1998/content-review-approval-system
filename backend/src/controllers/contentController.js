@@ -6,7 +6,11 @@ const getContents = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const status = req.query.status;
     const query = status && status !== "ALL" ? { status } : {};
-    
+
+    if (req.user.role === "creator") {
+      query.createdBy = req.user._id;
+    }
+
     const { contents, total } = await contentService.getAllContents(page, limit, query);
 
     res.json({

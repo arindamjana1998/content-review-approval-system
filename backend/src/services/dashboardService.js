@@ -1,10 +1,11 @@
+const mongoose = require("mongoose");
 const dashboardRepository = require("../repositories/dashboardRepository");
 
 class DashboardService {
   async getSummary(userId, userRole) {
     const filter = {};
     if (userRole === "creator") {
-      filter.createdBy = userId;
+      filter.createdBy = new mongoose.Types.ObjectId(userId);
     }
 
     const counts = await dashboardRepository.getContentStatusCounts(filter);
