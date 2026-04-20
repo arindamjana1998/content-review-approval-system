@@ -35,10 +35,8 @@ const SummaryModal: React.FC<SummaryModalProps> = ({
   const fetchContents = async () => {
     setLoading(true);
     try {
-      const data = await contentService.getContents();
-      const filtered =
-        status === "ALL" ? data : data.filter((item) => item.status === status);
-      setContents(filtered);
+      const response = await contentService.getContents(1, 50, status);
+      setContents(response.data);
     } catch (err) {
       console.error(err);
     } finally {
